@@ -4,12 +4,11 @@ A Hyprland based wrapper for [Gamescope](https://github.com/ValveSoftware/gamesc
 to run apps and games in a nested Wayland compositor with various enhancements.
 
 ## Features
-- Detection of width (`-W`) and height (`-H`) based on the focused monitor.
-- Detection of refresh rate (`-r`) based on the focused monitor.
-- Global Gamescope flags from a configuration file (`$HOME/.config/hypr/hyprscope.conf`).
-- Enable HDR in Gamescope only if the monitor supports HDR (`--hdr`).
-- Enable SDR to HDR inverse tone mapping in only if the monitor supports HDR (`--hdr-itm`).
-- Run Gamescope in GameMode (`-G`).
+- Automatically detects the width, height and refresh rate of the focused monitor to pass them to Gamescope.
+- Supports Gamescope (and internal) flags from a per-user configuration file (under `~/.config/hypr/hyprscope.conf`).
+- Can enable HDR in Gamescope only if the focused monitor supports it.
+- Can enable SDR to HDR inverse tone mapping only if the focused monitor supports HDR.
+- Can run Gamescope in GameMode with a simple flag (less typing... I'm lazy).
 
 ## Requirements
 - [Hyprland](https://hypr.land)
@@ -35,8 +34,10 @@ hyprscope -- %command%
 # gamescope <global_flags> -W <width> -H <height> -r <refresh_rate> -- %command%
 ```
 
+You can pass in the `--dry-run` flag to see the generated Gamescope command without executing it.
+
 ### Example
-~/.config/hypr/hyprscope.conf:
+`~/.config/hypr/hyprscope.conf`:
 ```bash
 # Enable GameMode
 -G
@@ -44,14 +45,14 @@ hyprscope -- %command%
 --adaptive-sync
 ```
 
-With an SDR monitor that has a resolution of 2560x1440 at 165Hz:
+#### 1440p 165Hz SDR monitor
 ```bash
 hyprscope -e --hdr -- steam -gamepadui
-# gamescope -G --adaptive-sync -W 2560 -H 1440 -r 165 -- steam -gamepadui
+# gamemoderun gamescope --adaptive-sync -e -W 2560 -H 1440 -r 165 -- steam -gamepadui
 ```
 
-With an HDR monitor that has a resolution of 3840x2160 at 120Hz:
+#### 4K 120Hz HDR monitor
 ```bash
 hyprscope -e --hdr -- steam -gamepadui
-# gamescope -G --adaptive-sync --hdr-enabled -W 3840 -H 2160 -r 120 -- steam -gamepadui
+# gamemoderun gamescope --adaptive-sync -e -W 3840 -H 2160 -r 120 --hdr-enabled -- steam -gamepadui
 ```
