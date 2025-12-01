@@ -3,8 +3,9 @@
 set -euo pipefail
 
 CONFIG_FILE="$HOME/.config/hypr/hyprscope.conf"
-COMMAND='gamescope'
+COMMAND=('gamescope')
 declare -A OPTS=([hdr]=0 [hdr_itm]=0 [dry_run]=0)
+ENV=()
 FLAGS=()
 ARGV=()
 
@@ -25,8 +26,12 @@ fi
 while [ $# -gt 0 ]; do
   case "$1" in
     -G)
-      COMMAND='gamemoderun gamescope'
+      COMMAND=('gamemoderun' 'gamescope')
       shift
+      ;;
+    --env)
+      ENV+=("$2")
+      shift 2
       ;;
     --hdr)
       OPTS[hdr]=1
@@ -77,9 +82,14 @@ if [ "$(echo "$MONITOR_INFO" | jq -r '.colorManagementPreset')" = "hdr" ]; then
   fi
 fi
 
+# Prepend env to command
+if [ "${#ENV[@]}" -gt 0 ]; then
+  COMMAND=('env' "${ENV[@]}" "${COMMAND[@]}")
+fi
+
 if [ "${OPTS[dry_run]}" = 1 ]; then
-  echo "$COMMAND ${FLAGS[*]} ${ARGV[*]}"
+  echo "${COMMAND[@]}" "${FLAGS[@]}" "${ARGV[@]}"
   exit 0
 fi
 
-exec $COMMAND "${FLAGS[@]}" "${ARGV[@]}"
+exec "${COMMAND[@]}" "${FLAGS[@]}" "${ARGV[@]}"
